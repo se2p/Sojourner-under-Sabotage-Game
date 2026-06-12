@@ -127,6 +127,9 @@ public class DialogueSystem : MonoBehaviour
         }
     }
     
+    // Register a component to be (re-)enabled once the current dialogue finishes.
+    public void EnableAfterDialogue(ComponentBehaviour c) => _activateAfterDialogue = c;
+
     // called from OneJS
     public void EnableInteraction()
     {

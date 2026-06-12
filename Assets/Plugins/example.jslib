@@ -13,5 +13,11 @@ mergeInto(LibraryManager.library, {
     },
     SendGameStartedEvent: function () {
         window.es.sendEvent(new GameStartedEvent());
+    },
+    OpenDebugger: function (componentName) {
+        window.openDebugger(UTF8ToString(componentName));
+    },
+    SendPuzzleSolvedEvent: function () {
+        window.es.sendEvent(new PuzzleSolvedEvent());
     }
 });

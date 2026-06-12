@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class EventManager : MonoBehaviour
 {
@@ -13,10 +14,12 @@ public class EventManager : MonoBehaviour
 
     public static EventManager Instance => _instance;
     private static EventManager _instance;
+    private static GameProgressState _pendingStateAfterSwitch;
     public readonly Dictionary<string, ComponentBehaviour> Components = new();
 
     [SerializeField] private string DemoComponentName = "CryoSleep";
     [SerializeField, TextArea] private string OnGameProgressionChangedJson = "{\"id\":1,\"room\":1,\"componentName\":\"Demo\",\"stage\":1,\"status\":\"TEST\"}";
+    [SerializeField] private GameProgressState.Mode sceneMode = GameProgressState.Mode.Testing;
 
     private void Awake()
     {
@@ -37,8 +40,20 @@ public class EventManager : MonoBehaviour
             Components.Add(c.componentName, c);
         }
         
-        // Send event to server to let it know that unity is ready to receive game progression updtaes
         StompEventDelegation.OnGameStarted();
+
+        if (_pendingStateAfterSwitch != null && _pendingStateAfterSwitch.mode == sceneMode)
+        {
+            var pending = _pendingStateAfterSwitch;
+            _pendingStateAfterSwitch = null;
+            StartCoroutine(ApplyStateNextFrame(pending));
+        }
+    }
+
+    private IEnumerator ApplyStateNextFrame(GameProgressState state)
+    {
+        yield return null;
+        ApplyState(state);
     }
 
     public void OnMutatedComponentTestsFailed(string componentName)
@@ -75,8 +90,21 @@ public class EventManager : MonoBehaviour
     {
         var unityJson = GameProgressState.ReplaceStatusStringWithInt(json);
         var gameProgressState = JsonUtility.FromJson<GameProgressState>(unityJson);
-        var component = Components[gameProgressState.componentName];
         GameProgressState.CurrentState = gameProgressState;
+        if(gameProgressState.mode != sceneMode)
+        {
+            Debug.Log("Mode switched");
+            _pendingStateAfterSwitch = gameProgressState;
+            SceneManager.LoadScene(gameProgressState.mode == GameProgressState.Mode.Debugging ? "Debug" : "Game");
+            return;
+        }
+
+        ApplyState(gameProgressState);
+    }
+
+    private void ApplyState(GameProgressState gameProgressState)
+    {
+        var component = Components[gameProgressState.componentName];
         onGameProgressionChanged?.Invoke(gameProgressState);
         component.HandleGameProgressionChanged(gameProgressState);
     }

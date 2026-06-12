@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f610edca08287b4fbbd8ebab1a2caa4, type: 3}
+  m_Name: DebugTileMapData
+  m_EditorClassIdentifier: 
+  Data:
+    Metadata:
+      version: 1.2.4
+      compressedTileData: 1
+    TileMapWidth: 200
+    TileMapHeight: 200
+    TileData:
+    - Tiles: 3ca8ffffffffffff0300000004000000050000000600000007000000030000003efffffffffffffffdffffff0b0000000e000000feffffff0b0000003fffffffffffffff3d000000faffffff13000000b900000040ffffffffffffff3d000000faffffff13000000b900000040ffffffffffffff3d000000faffffff13000000b900000040ffffffffffffff3d000000faffffff13000000b90000003ffffffffffffffffaffffff4f0000003ac0ffffffffffff
+      Visible: 1
+      Name: 0 - Ground
+      LayerType: 0
+      SortingLayer: Default
+      SortingOrder: 0
+      Depth: 1
+    - Tiles: c063ffffffffffff
+      Visible: 1
+      Name: 1 - Overlay
+      LayerType: 0
+      SortingLayer: Default
+      SortingOrder: 0
+      Depth: -1
+    - Tiles: c063ffffffffffff
+      Visible: 1
+      Name: 2 - C# Collisions
+      LayerType: 0
+      SortingLayer: Default
+      SortingOrder: 0
+      Depth: -1
+    - Tiles: c063ffffffffffff
+      Visible: 1
+      Name: 3 - Overlay
+      LayerType: 1
+      SortingLayer: Default
+      SortingOrder: 0
+      Depth: 0.5
+    - Tiles: c063ffffffffffff
+      Visible: 1
+      Name: 4 - Overlay
+      LayerType: 1
+      SortingLayer: Default
+      SortingOrder: 0
+      Depth: -1

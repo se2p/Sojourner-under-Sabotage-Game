@@ -11,7 +11,7 @@ public class ComponentBehaviour : MonoBehaviour
     private InteractableWorldObject _interactableWorldObject;
     private bool _wasNeverOpened = true;
     private bool _doNotReEnableAfterEditorClose;
-    
+
     private void Start()
     {
         _interactableWorldObject = GetComponent<InteractableWorldObject>();
@@ -20,7 +20,12 @@ public class ComponentBehaviour : MonoBehaviour
     public void OpenComponent()
     {
         Debug.Log("Opening component " + componentName);
-        BrowserUI.OpenEditorsForComponent(componentName);
+        var state = GameProgressState.CurrentState;
+        if (state != null && state.status == GameProgressState.Status.DEBUGGING)
+            BrowserUI.OpenDebuggerForComponent(componentName);
+        else
+            BrowserUI.OpenEditorsForComponent(componentName);
+
         _wasNeverOpened = false;
         FindObjectOfType<BrowserUI>().onEditorCloseEvent.AddListener(HandleEditorClosed);
     }
@@ -39,14 +44,14 @@ public class ComponentBehaviour : MonoBehaviour
         _interactableWorldObject.interactionIndicator.Hide();
         _doNotReEnableAfterEditorClose = true;
     }
-    
+
     public void EnableComponentInteraction()
     {
         _interactableWorldObject.IsEnabled = true;
         _interactableWorldObject.interactionIndicator.SetVisible(_wasNeverOpened);
         _doNotReEnableAfterEditorClose = false;
     }
-    
+
     public void HighlightInteraction()
     {
         _interactableWorldObject.IsEnabled = true;
@@ -65,11 +70,25 @@ public class ComponentBehaviour : MonoBehaviour
         {
             case GameProgressState.Status.TEST:
                 EnableComponentInteraction();
-                Debug.Log("Component "+gameProgressState.componentName+" enabled");
+                Debug.Log("Component " + gameProgressState.componentName + " enabled");
                 break;
             case GameProgressState.Status.TESTS_ACTIVE:
                 DisableComponentInteraction();
-                Debug.Log("Component "+gameProgressState.componentName+" disabled");
+                Debug.Log("Component " + gameProgressState.componentName + " disabled");
+                break;
+            case GameProgressState.Status.DEBUGGING:
+                if (DialogueSystem.Instance != null && DialogueSystem.Instance.HasDialogueToShow)
+                {
+                    // talk first, interact afterwards: stay disabled until the dialogue is finished
+                    DisableComponentInteraction();
+                    DialogueSystem.Instance.EnableAfterDialogue(this);
+                    Debug.Log("Component " + gameProgressState.componentName + " waits for dialogue before debugging");
+                }
+                else
+                {
+                    EnableComponentInteraction();
+                    Debug.Log("Component " + gameProgressState.componentName + " enabled for debugging");
+                }
                 break;
         }
     }

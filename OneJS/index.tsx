@@ -1,6 +1,7 @@
 import { h, render } from "preact"
 import Minigame from "minigame"
 import Dialogue from "dialogue"
+import DebugPuzzle from "debugpuzzle"
 import { emo } from "onejs/styled"
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
     `}>
         <Dialogue />
         <Minigame />
+        <DebugPuzzle />
     </div>
 }
 
