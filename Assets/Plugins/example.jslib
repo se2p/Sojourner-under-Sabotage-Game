@@ -19,5 +19,8 @@ mergeInto(LibraryManager.library, {
     },
     SendPuzzleSolvedEvent: function () {
         window.es.sendEvent(new PuzzleSolvedEvent());
+    },
+    SetPuzzleOpen: function (open) {
+        window.setPuzzleOpen(!!open);
     }
 });

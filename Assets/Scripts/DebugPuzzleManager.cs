@@ -14,10 +14,15 @@ public class DebugPuzzleManager : MonoBehaviour
         else Debug.LogError("There is already a DebugPuzzleManager");
     }
 
-    public void ShowPuzzle(int room) => OnShowPuzzle?.Invoke(room);
+    public void ShowPuzzle(int room)
+    {
+        OnShowPuzzle?.Invoke(room);
+        BrowserUI.NotifyPuzzleOpen(true);
+    }
 
     public void PuzzleSolved()
     {
+        BrowserUI.NotifyPuzzleOpen(false);
         StompEventDelegation.OnPuzzleSolved();
     }
 }
