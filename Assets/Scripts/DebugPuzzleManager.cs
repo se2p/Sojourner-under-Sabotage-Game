@@ -18,10 +18,12 @@ public class DebugPuzzleManager : MonoBehaviour
     {
         OnShowPuzzle?.Invoke(room);
         BrowserUI.NotifyPuzzleOpen(true);
+        Time.timeScale = 0;
     }
 
     public void PuzzleSolved()
     {
+        Time.timeScale = 1;
         BrowserUI.NotifyPuzzleOpen(false);
         StompEventDelegation.OnPuzzleSolved();
     }
