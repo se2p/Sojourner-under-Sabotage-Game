@@ -70,11 +70,15 @@ const Dialogue = () => {
 
     useEffect(() => {
         if (scrollView.current) {
-            const scroller = ((scrollView.current as any).ve as ScrollView).verticalScroller
-            const tween = new Tween({ y: scroller.value }).to({ y: Math.max(scroller.highValue, 0) }, 4e2).onUpdate((o) => {
+            // highValue must be re-read every frame: UIToolkit computes the layout for the page
+            // that was just rendered only on a later frame, so a target sampled here would still
+            // be the previous page's scroll end (dialogue appears one page behind / last page never
+            // visible). Tween a progress value instead and chase the live highValue.
+            const tween = new Tween({ t: 0 }).to({ t: 1 }, 4e2).onUpdate((o) => {
                 if (scrollView.current) {
-                    const sv = (scrollView.current as any).ve as ScrollView
-                    sv.verticalScroller.value = o.y
+                    const scroller = ((scrollView.current as any).ve as ScrollView).verticalScroller
+                    const target = Math.max(scroller.highValue, 0)
+                    scroller.value = scroller.value + (target - scroller.value) * o.t
                 }
             }).start()
 
@@ -147,6 +151,7 @@ const Dialogue = () => {
                         {currentDialogue.map((text, i, a) => i <= index ? <div class={emo`
                             color: ${i === index ? "#fff" : "rgba(255, 255, 255, " + clamp(1 - ((index - i) / (index + 1)), .1, .75) + ")"};
                             font-size: 20px;
+                            white-space: normal;
                             margin-top: ${i == 0 ? "300px" : index === i ? "35px" : "10px"};
                             transition: color .4s ease-in-out, scale .4s ease-in-out;
                             scale: ${i === index ? "1" : "0.75"};

@@ -17,6 +17,9 @@ public class BrowserUI : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void SetPuzzleOpen(bool open);
+
+    [DllImport("__Internal")]
+    private static extern void NotifyEpilogueFinished();
 #endif
     
     public UnityEvent onEditorCloseEvent;
@@ -72,4 +75,16 @@ public class BrowserUI : MonoBehaviour
         Debug.Log("Not supported on this platform (needs to be the WebGL export)");
 #endif
     }
+
+    // The web app holds back the "game finished" popup until the in-game epilogue has been
+    // talked through; this tells it the epilogue is over and it can end the session.
+    public static void NotifyEpilogueOver()
+    {
+#if !UNITY_EDITOR && UNITY_WEBGL
+        NotifyEpilogueFinished();
+#else
+        Debug.Log("Not supported on this platform (needs to be the WebGL export)");
+#endif
+    }
+
 }

@@ -14,6 +14,14 @@ public class DialogueSystem : MonoBehaviour
     private static DialogueSystem _instance;
 
     public event Action<List<String>> OnShowDialogue; // used to trigger OneJS
+    // Fired when an externally pushed dialogue (PlayExternalDialogue) finishes. Used by the
+    // Telescope to close the scan image and unlock the teleporter only after the scan text ends.
+    public event Action OnExternalDialogueFinished;
+    // Fired when an internal (condition-keyed) dialogue finishes. Telescope and Teleporter use
+    // it to stay locked until the player has talked to the robot (the room's intro dialogue).
+    // Deliberately NOT fired for external dialogues: a flavor text (DialogueTriggeringWorldObject,
+    // PlayExternalDialogue) must not unlock those gates.
+    public event Action OnDialogueFinished;
     public UnityEvent onHasDialogueToShow;
     public bool HasDialogueToShow => _hasDialogueToShow;
     public bool IsDialoguePlaying => _isInternalDialoguePlaying || _isExternalDialoguePlaying;
@@ -139,9 +147,16 @@ public class DialogueSystem : MonoBehaviour
             _activateAfterDialogue.HighlightInteraction();
             _activateAfterDialogue = null;
         }
+        var wasExternal = _isExternalDialoguePlaying;
         _isExternalDialoguePlaying = false;
         _isInternalDialoguePlaying = false;
+        if (wasExternal) OnExternalDialogueFinished?.Invoke();
+        else OnDialogueFinished?.Invoke();
     }
+
+    // True if an authored dialogue entry exists for this state's condition (room/stage/status/mode).
+    public bool HasDialogueFor(GameProgressState state) =>
+        _dialogueMap.ContainsKey(new GameProgressState.DialogueCondition(state));
 
     [Serializable]
     public struct DialogueEntry
