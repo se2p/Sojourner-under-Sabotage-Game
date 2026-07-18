@@ -11,7 +11,7 @@ const COL = {
     panel: "rgb(28, 32, 40)",
     border: "rgb(78, 88, 104)", // heller Rahmen des Pixel-Panels (gegen den dunklen Hintergrund sichtbar)
     pipeClosed: "rgb(70, 76, 86)",
-    accent: "rgb(60, 90, 160)",
+    accent: "rgb(69, 52, 39)", // Button-Braun statt Blau (Blau passte nicht zur Tempel-Palette)
     text: "rgb(235, 238, 242)",
     backdrop: "rgb(10, 12, 16)",
 }
@@ -97,7 +97,7 @@ function rafDelay(ms: number, fn: () => void) {
 const TIPS = {
     vars: "Current value of each variable\nThe blocks recolor them",
     goal: "Required colors after a full run",
-    program: "Runs top to bottom\n▶ run all, arrows: one step\nClick a green tile to remove it",
+    program: "Runs top to bottom\nPlay runs all, arrows: one step\nClick a green tile to remove it",
     builder: "Click shape / color to change them\nDrag the tile into the program",
     legend: "Allowed color changes\nAnything else aborts the run",
 }
@@ -139,7 +139,6 @@ const S2 = {
     ghost: emo`position: absolute; top: 0; left: 0; opacity: 0.9;`,
     resultText: emo`font-size: 15px; -unity-font-style: bold; margin-top: 12px; -unity-text-align: middle-center;`,
     errBox: emo`flex-direction: row; align-items: center; justify-content: center; margin-top: 12px; padding: 6px 10px; border-radius: 8px; border-width: 2px; border-color: rgb(220,90,84);`,
-    hint: emo`color: rgb(150,156,166); font-size: 12px; margin-top: 8px; -unity-text-align: middle-center;`,
 }
 
 // Pixel-Panel: 9-slice-Sprite (panel_box.png, Ecken/Rivets bleiben fix, Mitte wird gestreckt)
@@ -167,7 +166,7 @@ const room2Rounds: StateRound[] = [
         goal: [2, 2],
         tileBudget: 2,
         hint: [
-            "Drag map tiles between the program's steps to fill the gaps. ▶ runs the whole program; the step arrows run it one block at a time.",
+            "Drag map tiles between the program's steps to fill the gaps. The play button runs the whole program; the step arrows run it one block at a time.",
             "",
             "Watch the Variables panel while it runs — each block recolors one variable. Your goal is to reach the colors shown under Goal.",
         ].join("\n"),
@@ -411,8 +410,8 @@ const StateObservationPuzzle = ({ config, solved }: { config: StateRound, solved
     }
 
     const resColor = result === "win" ? "rgb(90,200,120)" : result === "fail" ? "rgb(220,90,84)" : COL.text
-    const resText = running ? "running …"
-        : result === "win" ? "Goal state reached ✓"
+    const resText = running ? "running..."
+        : result === "win" ? "Goal state reached"
         : result === "fail" ? "Goal state not reached" : ""
 
     return <div class={S2.root} onPointerMove={onRootMove} onPointerUp={onRootUp} onPointerLeave={onRootLeave}>
@@ -445,7 +444,6 @@ const StateObservationPuzzle = ({ config, solved }: { config: StateRound, solved
                     {result === "illegal" && badTrans
                         ? <div class={S2.errBox}><Circle color={badTrans.from} /><Arrow /><Circle color={badTrans.to} /></div>
                         : <div class={S2.resultText} style={{ color: resColor }}>{resText}</div>}
-                    <div class={S2.hint}>"?" tiles: infer variable + target color by observing.</div>
                 </PixelPanel>
             </div>
 
@@ -474,7 +472,6 @@ const StateObservationPuzzle = ({ config, solved }: { config: StateRound, solved
                         <MapTile target={bTarget} to={bTo} big onTarget={cycleTarget} onTo={cycleTo} />
                     </div>
                     <div class={S2.budget}>Available: {budget}</div>
-                    <div class={S2.hint}>Drag the tile between the blocks (the line marks the spot).</div>
                 </PixelPanel>
 
                 <PixelPanel minWidth={230} center marginTop={14}>

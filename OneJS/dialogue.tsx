@@ -69,28 +69,40 @@ const Dialogue = () => {
     }, [])
 
     useEffect(() => {
-        if (scrollView.current) {
-            // highValue must be re-read every frame: UIToolkit computes the layout for the page
-            // that was just rendered only on a later frame, so a target sampled here would still
-            // be the previous page's scroll end (dialogue appears one page behind / last page never
-            // visible). Tween a progress value instead and chase the live highValue.
-            const tween = new Tween({ t: 0 }).to({ t: 1 }, 4e2).onUpdate((o) => {
-                if (scrollView.current) {
-                    const scroller = ((scrollView.current as any).ve as ScrollView).verticalScroller
-                    const target = Math.max(scroller.highValue, 0)
-                    scroller.value = scroller.value + (target - scroller.value) * o.t
-                }
-            }).start()
+        // isDialogueActive is a dependency so this re-runs the frame the scrollview actually mounts:
+        // the C#-driven state updates in showDialogue can flush as separate renders, so the first
+        // render carries the new page while isDialogueActive is still false (scrollview not mounted).
+        // Without this, the scroll never runs for the freshly opened dialogue and the first page,
+        // pushed down by its 300px top margin, stays below the fold -> empty box until the next page.
+        if (!isDialogueActive || !scrollView.current) return
 
-            const animate = time => {
-                if (tween.isPlaying()) {
-                    update(time);
-                    requestAnimationFrame(animate);
-                }
-            };
-            requestAnimationFrame(animate);
+        // highValue must be re-read every frame: UIToolkit computes the layout for the page
+        // that was just rendered only on a later frame, so a target sampled here would still
+        // be the previous page's scroll end (dialogue appears one page behind / last page never
+        // visible). Tween a progress value instead and chase the live highValue.
+        const tween = new Tween({ t: 0 }).to({ t: 1 }, 4e2).onUpdate((o) => {
+            if (scrollView.current) {
+                const scroller = ((scrollView.current as any).ve as ScrollView).verticalScroller
+                const target = Math.max(scroller.highValue, 0)
+                scroller.value = scroller.value + (target - scroller.value) * o.t
+            }
+        }).start()
+
+        // Self-terminating via a flag (not cancelAnimationFrame, whose OneJS id is a stale list
+        // index) so leaked loops can't pile up across dialogues and keep driving the global update().
+        let cancelled = false
+        const animate = time => {
+            if (cancelled || !tween.isPlaying()) return
+            update(time)
+            requestAnimationFrame(animate)
         }
-    }, [index, currentDialogue])
+        requestAnimationFrame(animate)
+
+        return () => {
+            cancelled = true
+            tween.stop()
+        }
+    }, [index, currentDialogue, isDialogueActive])
 
     useEffect(() => {
         if (focusElement.current && isDialogueActive) {

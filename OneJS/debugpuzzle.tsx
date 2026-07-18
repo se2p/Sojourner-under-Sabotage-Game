@@ -21,7 +21,7 @@ const PlaceholderPuzzle = ({ solved }: { solved: () => void }) =>
             <div style={{ color: "rgb(235, 238, 242)" }} class={emo`
                 font-size: 18px; -unity-font-style: bold; margin-bottom: 16px; -unity-text-align: middle-center;
             `}>Another puzzle (placeholder)</div>
-            <div onClick={solved} style={{ backgroundColor: "rgb(60, 90, 160)" }} class={emo`
+            <div onClick={solved} style={{ backgroundColor: "rgb(69, 52, 39)" }} class={emo`
                 padding: 10px 18px; border-radius: 6px; -unity-text-align: middle-center;
             `}><div style={{ color: "rgb(235, 238, 242)" }}>Complete puzzle</div></div>
         </div>

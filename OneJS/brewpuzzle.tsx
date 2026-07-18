@@ -25,7 +25,7 @@ const IMG = (name: string) => {
 const COL = {
     panel: "rgb(28, 32, 40)",
     border: "rgb(78, 88, 104)",
-    accent: "rgb(60, 90, 160)",
+    accent: "rgb(69, 52, 39)", // Button-Braun statt Blau (Blau passte nicht zur Tempel-Palette)
     text: "rgb(235, 238, 242)",
     dim: "rgb(150, 156, 166)",
     backdrop: "rgb(10, 12, 16)",
@@ -106,9 +106,9 @@ function itemSprite(id: string): string { return productIndex(id) >= 0 ? "bottle
 // Hover-Erklärungen der einzelnen Panels (siehe InfoIcon/InfoTip in infotip.tsx).
 const TIPS = {
     view: "One mixing step at a time\nClick a bottle to pick a test target\nThe lens on a bottle opens its recipe\nThe trail on top leads back",
-    plant: "▶ tests the picked bottle\n✓ clean, ✗ contaminated",
-    analysis: "This step's contents\nTop: recipe. Bottom: actually used\nHidden until this bottle was tested\nA difference = the broken step",
-    vat: "Re-mix this step:\ndrag its ingredients in, ✓ mixes\nClick a chip to remove it",
+    plant: "The play button tests the picked bottle\ncheck = clean, cross = contaminated",
+    analysis: "This step's contents\nTop: recipe. Bottom: actually used\nHidden until this bottle was tested",
+    vat: "Re-mix this step:\nDrag its ingredients in from the left\nClick a ingredient to remove it",
 }
 
 type Line = { item: string, amount: number }
@@ -171,24 +171,24 @@ const S3 = {
     bottleMini: emo`width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;`,
     // Verdikt-Badge an der Flasche (✓/✗/–): dauerhafter Wissensstand wie in Rätsel 4.
     badge: emo`position: absolute; left: 40px; top: -8px; width: 22px; height: 22px; border-radius: 11px; border-width: 2px; background-color: ${COL.panel}; align-items: center; justify-content: center;`,
-    badgeText: emo`font-size: 13px; -unity-font-style: bold; -unity-text-align: middle-center;`,
+    badgeImg: emo`width: 16px; height: 16px; flex-shrink: 0;`,
     // Lupen-Icon oben links an Eingangsflaschen (Gegenstück zum Verdikt-Badge oben
     // rechts): Klick steigt in deren Rezept hinab (nur Mischungen). Aus Divs
     // gezeichnet (kein Sprite, Emoji im Runtime-Font unzuverlaessig): Kreis + Griff.
     lensBtn: emo`position: absolute; left: -8px; top: -8px; width: 24px; height: 24px; padding: 2px; align-items: center; justify-content: center;`,
-    lensRing: emo`position: absolute; left: 3px; top: 3px; width: 12px; height: 12px; border-radius: 8px; border-width: 2px; border-color: ${COL.accent}; background-color: ${COL.panel};`,
-    lensHandle: emo`position: absolute; left: 13px; top: 14px; width: 9px; height: 3px; border-radius: 2px; background-color: ${COL.accent};`,
+    lensRing: emo`position: absolute; left: 3px; top: 3px; width: 12px; height: 12px; border-radius: 8px; border-width: 2px; border-color: rgb(150, 112, 70); background-color: ${COL.panel};`,
+    lensHandle: emo`position: absolute; left: 13px; top: 14px; width: 9px; height: 3px; border-radius: 2px; background-color: rgb(150, 112, 70);`,
     // Breadcrumb: Abstiegspfad als Mini-Flaschen, aktuelle Ansicht gelb umrandet.
     crumbRow: emo`position: absolute; left: 10px; top: 10px; flex-direction: row; align-items: center;`,
     crumb: emo`width: 40px; height: 40px; border-radius: 8px; border-width: 2px; background-color: ${COL.node}; align-items: center; justify-content: center;`,
     crumbImg: emo`width: 32px; height: 32px; flex-shrink: 0;`,
-    crumbSep: emo`color: ${COL.dim}; font-size: 16px; -unity-font-style: bold; margin-left: 5px; margin-right: 5px; -unity-text-align: middle-center;`,
+    crumbSep: emo`width: 16px; height: 16px; flex-shrink: 0; margin-left: 5px; margin-right: 5px;`,
     qmark: emo`color: ${COL.dim}; font-size: 20px; -unity-font-style: bold; -unity-text-align: middle-center; width: 40px;`,
-    freshGlyph: emo`color: ${COL.good}; font-size: 16px; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 2px;`,
+    freshImg: emo`width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;`,
     // Pflanze: ein 32×32-Sprite (mit Topf) ×3.
     plantImg: emo`width: 96px; height: 96px; flex-shrink: 0;`,
     resultRow: emo`flex-direction: row; align-items: center; justify-content: center; margin-top: 10px;`,
-    resultGlyph: emo`font-size: 20px; -unity-font-style: bold; margin-left: 8px; -unity-text-align: middle-center;`,
+    resultImg: emo`width: 16px; height: 16px; flex-shrink: 0; margin-left: 8px;`,
     // Analyse: Soll- und Ist-Reihe der aktuellen Ansicht, durch Linie getrennt.
     analysisBox: emo`align-items: center; margin-top: 12px;`,
     divider: emo`width: 200px; height: 2px; background-color: ${COL.border}; margin-top: 8px; margin-bottom: 2px;`,
@@ -204,12 +204,11 @@ const S3 = {
     swatchBig: emo`width: 48px; height: 48px; flex-shrink: 0;`,
     chipText: emo`color: ${COL.text}; font-size: 12px;`,
     btnRow: emo`flex-direction: row; align-items: center; justify-content: center; margin-top: 10px;`,
-    glyphBtn: emo`width: 38px; height: 38px; border-radius: 6px; margin-left: 6px; margin-right: 6px; align-items: center; justify-content: center;`,
-    glyphText: emo`color: ${COL.text}; font-size: 18px; -unity-font-style: bold; -unity-text-align: middle-center;`,
+    btn: emo`width: 44px; height: 44px; flex-shrink: 0;`,
     ghost: emo`position: absolute; top: 0; left: 0; opacity: 0.9;`,
-    // Stufenende: schlichtes Erfolgs-Overlay über allem, weiter per ▶.
+    // Stufenende: schlichtes Erfolgs-Overlay über allem, weiter per Play-Knopf.
     resultOverlay: emo`position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(10, 12, 16, 0.75); align-items: center; justify-content: center;`,
-    winGlyph: emo`color: ${COL.good}; font-size: 56px; -unity-font-style: bold; -unity-text-align: middle-center; margin-bottom: 6px;`,
+    winImg: emo`width: 96px; height: 96px; flex-shrink: 0; margin-bottom: 6px;`,
     panelOuter: emo`align-items: stretch;`,
     panelInnerStretch: emo`padding: 14px; align-items: stretch;`,
     panelInnerCenter: emo`padding: 14px; align-items: center;`,
@@ -279,9 +278,9 @@ const room3Rounds: BrewRound[] = [
             },
         ],
         hint: [
-            "The fertilizer failed (✗), and the fault can sit anywhere along the brewing chain.",
+            "The fertilizer failed its test, and the fault can sit anywhere along the brewing chain.",
             "",
-            "Test a bottle (▶) to check it, use its lens to see its recipe, and use the trail at the top to get back. The step whose actual contents don't match its recipe is the one to re-mix.",
+            "Test a bottle (play button) to check it, use its lens to see its recipe, and use the trail at the top to get back. The step whose actual contents don't match its recipe is the one to re-mix.",
         ].join("\n"),
     },
     // Stufe 2 (mittel, KETTE p1 -> p2 -> p3 -> p4): FALSCHE KONZENTRATION in
@@ -311,7 +310,7 @@ const room3Rounds: BrewRound[] = [
         hint: [
             "A step's contents only show once you have tested its bottle, and the trail can run deep.",
             "",
-            "Follow the ✗ backward one bottle at a time: if a bad mixture's own contents match its recipe, the problem came in through one of its input bottles.",
+            "Follow the cross marks backward one bottle at a time: if a bad mixture's own contents match its recipe, the problem came in through one of its input bottles.",
         ].join("\n"),
     },
     // Stufe 3 (schwer, Raute mit ZWEI Fehlern in verschiedenen Ästen):
@@ -344,7 +343,7 @@ const room3Rounds: BrewRound[] = [
         hint: [
             "Fixing one bad step doesn't always fix the product.",
             "",
-            "If the fertilizer still fails after a fix, the old test results are stale (–): trace the failure again, another branch may hide a second fault.",
+            "If the fertilizer still fails after a fix, the old test results are stale: trace the failure again, another branch may hide a second fault.",
         ].join("\n"),
     },
 ]
@@ -357,15 +356,10 @@ const Chip = ({ item, amount, onClick }: { item: string, amount: number, onClick
         <div class={S3.chipText}>{"×" + amount}</div>
     </div>
 
-const GlyphBtn = ({ glyph, onClick, primary, disabled }: { glyph: string, onClick: () => void, primary?: boolean, disabled?: boolean }) =>
-    <div onClick={onClick} class={S3.glyphBtn} style={{ backgroundColor: primary && !disabled ? COL.accent : "rgb(69, 52, 39)", opacity: disabled ? 0.4 : 1 }}>
-        <div class={S3.glyphText}>{glyph}</div>
-    </div>
-
 type Verdict = "none" | "ok" | "bad"
 
 function verdictColor(v: Verdict): string { return v === "ok" ? COL.good : v === "bad" ? COL.bad : COL.dim }
-function verdictGlyph(v: Verdict): string { return v === "ok" ? "✓" : v === "bad" ? "✗" : "–" }
+function verdictImg(v: Verdict): string { return v === "ok" ? "check" : v === "bad" ? "cross" : "dash" }
 
 const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void }) => {
     const steps = config.steps
@@ -549,7 +543,7 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
                     <div class={S3.bottle} style={{ backgroundImage: IMG("bottle_" + l.item) }}></div>
                 </div>
                 <div class={S3.badge} style={{ borderColor: vColor }}>
-                    <div class={S3.badgeText} style={{ color: vColor }}>{verdictGlyph(verdicts[pi])}</div>
+                    <div class={S3.badgeImg} style={{ backgroundImage: IMG(verdictImg(verdicts[pi])) }}></div>
                 </div>
                 <div class={S3.amtText}>{"×" + l.amount}</div>
                 {/* Lupe oben links (Badge sitzt oben rechts): steigt ins Rezept hinab. */}
@@ -576,7 +570,7 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
             <div class={S3.bottle} style={{ backgroundImage: IMG("bottle_" + productId(view)) }}></div>
         </div>
         <div class={S3.badge} style={{ borderColor: vvColor }}>
-            <div class={S3.badgeText} style={{ color: vvColor }}>{verdictGlyph(verdicts[view])}</div>
+            <div class={S3.badgeImg} style={{ backgroundImage: IMG(verdictImg(verdicts[view])) }}></div>
         </div>
     </div>)
 
@@ -584,7 +578,7 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
     const crumbs: any = []
     for (let k = 0; k < path.length; k++) {
         const kk = k
-        if (k > 0) crumbs.push(<div key={"cs" + k} class={S3.crumbSep}>▸</div>)
+        if (k > 0) crumbs.push(<div key={"cs" + k} class={S3.crumbSep} style={{ backgroundImage: IMG("arrow_right") }}></div>)
         crumbs.push(<div key={"c" + k} class={S3.crumb} onClick={() => jumpTo(kk)}
             style={{ borderColor: k === path.length - 1 ? COL.highlight : COL.border }}>
             <div class={S3.crumbImg} style={{ backgroundImage: IMG("bottle_" + productId(path[k])) }}></div>
@@ -622,15 +616,15 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
                 <PixelPanel minWidth={240} center>
                     <InfoIcon text={TIPS.plant} setTip={setTip} corner />
                     <div class={S3.plantImg} style={{ backgroundImage: IMG("plant_" + plantState) }}></div>
-                    {/* Zuletzt getestete Flasche + ✓/✗. */}
+                    {/* Zuletzt getestete Flasche + Verdikt-Sprite. */}
                     <div class={S3.resultRow}>
                         <div class={S3.bottleMini} style={{ backgroundImage: IMG("bottle_" + productId(lastTest.step)) }}></div>
-                        <div class={S3.resultGlyph} style={{ color: lastTest.ok ? COL.good : COL.bad }}>{lastTest.ok ? "✓" : "✗"}</div>
+                        <div class={S3.resultImg} style={{ backgroundImage: IMG(lastTest.ok ? "check" : "cross") }}></div>
                     </div>
                     {/* Gewählte Flasche + Test-Knopf. */}
                     <div class={S3.btnRow}>
                         <div class={S3.bottleMini} style={{ backgroundImage: IMG("bottle_" + productId(selected)) }}></div>
-                        <GlyphBtn glyph="▶" onClick={runTest} primary disabled={won} />
+                        <div onClick={won ? undefined : runTest} class={S3.btn} style={{ backgroundImage: IMG("play"), backgroundColor: "rgba(0,0,0,0)", opacity: won ? 0.4 : 1 }}></div>
                     </div>
                 </PixelPanel>
 
@@ -643,7 +637,7 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
                         {showActual
                             ? <div class={S3.vatChips}>{usedLines(view).map(l => <Chip item={l.item} amount={l.amount} />)}</div>
                             : <div class={S3.qmark}>?</div>}
-                        {rebrewed[view] ? <div class={S3.freshGlyph}>✓</div> : <div></div>}
+                        {rebrewed[view] ? <div class={S3.freshImg} style={{ backgroundImage: IMG("check") }}></div> : <div></div>}
                     </div>
                 </PixelPanel>
 
@@ -669,8 +663,8 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
                             ? <div class={S3.vatChips}>{vatItems.map(id => <Chip item={id} amount={vat[id]} onClick={() => removeFromVat(id)} />)}</div>
                             : <div></div>}
                         <div class={S3.btnRow}>
-                            <GlyphBtn glyph="✓" onClick={mix} primary disabled={won || vatItems.length === 0} />
-                            <GlyphBtn glyph="✗" onClick={clearVat} disabled={vatItems.length === 0} />
+                            <div onClick={(won || vatItems.length === 0) ? undefined : mix} class={S3.btn} style={{ backgroundImage: IMG("puzzle_1_check"), backgroundColor: "rgba(0,0,0,0)", opacity: (won || vatItems.length === 0) ? 0.4 : 1 }}></div>
+                            <div onClick={vatItems.length === 0 ? undefined : clearVat} class={S3.btn} style={{ backgroundImage: IMG("puzzle_1_cross"), backgroundColor: "rgba(0,0,0,0)", opacity: vatItems.length === 0 ? 0.4 : 1 }}></div>
                         </div>
                     </PixelPanel>
                 </div>
@@ -683,13 +677,13 @@ const BrewPuzzle = ({ config, solved }: { config: BrewRound, solved: () => void 
             </div>
             : <div></div>}
 
-        {/* Stufenende: schlichtes Erfolgs-Overlay (großes ✓) + Weiter-Knopf, über allen Panels. */}
+        {/* Stufenende: schlichtes Erfolgs-Overlay (großes Häkchen) + Weiter-Knopf, über allen Panels. */}
         {showResult
             ? <div class={S3.resultOverlay}>
                 <PixelPanel minWidth={280} center>
-                    <div class={S3.winGlyph}>✓</div>
+                    <div class={S3.winImg} style={{ backgroundImage: IMG("puzzle_1_check"), backgroundColor: "rgba(0,0,0,0)" }}></div>
                     <div class={S3.btnRow}>
-                        <GlyphBtn glyph="▶" onClick={() => solved()} primary />
+                        <div onClick={() => solved()} class={S3.btn} style={{ backgroundImage: IMG("play"), backgroundColor: "rgba(0,0,0,0)" }}></div>
                     </div>
                 </PixelPanel>
             </div>

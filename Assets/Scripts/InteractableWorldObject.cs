@@ -98,6 +98,15 @@ public class InteractableWorldObject : MonoBehaviour
         isActivationKeyPressed = isActivationKeyPressed && Input.GetKey(activationKey)
                                  || Input.GetKeyDown(activationKey) && Time.timeSinceLevelLoad > 0.5f;
 
+        // Block interactions while a dialogue is showing: the interact key is also the dialogue
+        // continue key, so advancing dialogue must not fire nearby objects. Latch until the key is
+        // released so the very press that closes the dialogue (EnableInteraction may clear the flag
+        // in the same frame, before or after this Update) can't leak into a trigger.
+        if (DialogueSystem.Instance != null && DialogueSystem.Instance.IsDialoguePlaying)
+        {
+            _ignoreUntilKeyReleased = true;
+        }
+
         if (_ignoreUntilKeyReleased)
         {
             if (!Input.GetKey(activationKey)) _ignoreUntilKeyReleased = false;

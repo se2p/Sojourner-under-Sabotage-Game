@@ -25,7 +25,7 @@ const IMG = (name: string) => {
 const COL = {
     panel: "rgb(28, 32, 40)",
     border: "rgb(78, 88, 104)",
-    accent: "rgb(60, 90, 160)",
+    accent: "rgb(69, 52, 39)", // Button-Braun statt Blau (Blau passte nicht zur Tempel-Palette)
     text: "rgb(235, 238, 242)",
     dim: "rgb(150, 156, 166)",
     backdrop: "rgb(10, 12, 16)",
@@ -187,9 +187,9 @@ const BG_TILE = 384
 // Hover-Erklärungen der einzelnen Panels (siehe InfoIcon/InfoTip in infotip.tsx).
 // Das Rätsel bleibt sonst textfrei; die Erklärungen erscheinen nur beim Hover über dem "i".
 const TIPS = {
-    hypo: "Guessed output per input color\nDrag from palette, click clears\n✓/✗ = fits/contradicts observations",
+    hypo: "Guessed output per input color\nDrag from palette, click clears\ncheck/cross = fits/contradicts observations",
     palette: "Drag colors onto input balls\nor hypothesis slots",
-    machine: "Tabs: one unit or the whole chain\nFill the input balls, ▶ runs",
+    machine: "Tabs: one unit or the whole chain\nFill the input balls, the play button runs",
     target: "The chain must output these balls\n(any order) to solve the puzzle",
 }
 
@@ -210,9 +210,9 @@ const S4 = {
     hypoRow: emo`flex-direction: row; align-items: flex-start; justify-content: center;`,
     hypoCell: emo`align-items: center; margin-left: 6px; margin-right: 6px; margin-top: 4px; margin-bottom: 4px;`,
     inDot: emo`width: 20px; height: 20px; border-radius: 10px; flex-shrink: 0;`,
-    arrowText: emo`color: ${COL.dim}; font-size: 13px; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 1px; margin-bottom: 1px;`,
+    arrowImg: emo`width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; margin-bottom: 1px;`,
     slot: emo`width: 32px; height: 32px; border-radius: 16px; border-width: 2px; border-color: ${COL.border}; flex-shrink: 0;`,
-    verdictText: emo`font-size: 18px; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 8px;`,
+    verdictImg: emo`width: 16px; height: 16px; flex-shrink: 0; margin-top: 8px;`,
     // Palette (Drag-Quelle für Slots und Trichter-Kugeln). Alle Kugeln sind 16×16-
     // Murmel-Sprites, ganzzahlig ×2 (FilterMode.Point -> scharfe Pixel).
     palRow: emo`flex-direction: row; align-items: center; justify-content: center;`,
@@ -225,7 +225,7 @@ const S4 = {
     // Einheiten-Box: 32×32-Gehäuse-Sprite ×2; die Pips liegen über der ruhigen Mitte.
     unitBox: emo`width: 64px; height: 64px; flex-shrink: 0; align-items: center; justify-content: center;`,
     pipe: emo`width: 32px; height: 16px; flex-shrink: 0; margin-left: 4px; margin-right: 4px;`,
-    resultGlyph: emo`font-size: 22px; -unity-font-style: bold; -unity-text-align: middle-center; margin-top: 6px;`,
+    resultImg: emo`width: 16px; height: 16px; flex-shrink: 0; margin-top: 6px;`,
     // Geister-Kugeln der Tafel-Vorhersage am Maschinen-Ende.
     ballMini: emo`width: 16px; height: 16px; border-radius: 8px; flex-shrink: 0; margin: 2px; opacity: 0.9;`,
     // Pip-Kennung (1..n Punkte): verbindet Einheit, Tafel und Tab miteinander.
@@ -233,15 +233,14 @@ const S4 = {
     pip: emo`width: 6px; height: 6px; border-radius: 3px; flex-shrink: 0; margin-left: 2px; margin-right: 2px;`,
     // Tab-Leiste: Einheit einzeln testen (Pip-Tabs) oder alle in Reihe (Ketten-Tab).
     tabRow: emo`flex-direction: row; align-items: center; justify-content: center; margin-bottom: 10px;`,
-    tab: emo`min-width: 44px; height: 30px; border-radius: 6px; padding-left: 8px; padding-right: 8px; margin-left: 5px; margin-right: 5px; align-items: center; justify-content: center;`,
+    tab: emo`min-width: 44px; height: 30px; border-radius: 6px; padding-left: 8px; padding-right: 8px; margin-left: 5px; margin-right: 5px; align-items: center; justify-content: center; border-width: 2px;`,
     // Mini-Kette im Ketten-Tab: Kästchen + Verbindungsstücke.
     chainRow: emo`flex-direction: row; align-items: center; justify-content: center;`,
     chainBox: emo`width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; background-color: ${COL.text};`,
     chainLink: emo`width: 5px; height: 2px; flex-shrink: 0; background-color: ${COL.dim};`,
     // Steuerleiste: der Start-Knopf.
     ctrlRow: emo`flex-direction: row; align-items: center; justify-content: center; margin-top: 12px;`,
-    glyphBtn: emo`width: 38px; height: 38px; border-radius: 6px; margin-left: 6px; margin-right: 6px; align-items: center; justify-content: center;`,
-    glyphText: emo`color: ${COL.text}; font-size: 18px; -unity-font-style: bold; -unity-text-align: middle-center;`,
+    btn: emo`width: 44px; height: 44px; flex-shrink: 0;`,
     // Ghost der gezogenen Paletten-Farbe (folgt dem Zeiger).
     ghost: emo`position: absolute; top: 0; left: 0; opacity: 0.9;`,
     ghostBall: emo`width: 32px; height: 32px; flex-shrink: 0;`,
@@ -264,11 +263,6 @@ const Pips = ({ n, color }: { n: number, color?: string }) => {
     for (let i = 0; i < n; i++) dots.push(<div key={"p" + i} class={S4.pip} style={{ backgroundColor: color || COL.dim }}></div>)
     return <div class={S4.pipRow}>{dots}</div>
 }
-
-const GlyphBtn = ({ glyph, onClick, primary, disabled }: { glyph: string, onClick: () => void, primary?: boolean, disabled?: boolean }) =>
-    <div onClick={onClick} class={S4.glyphBtn} style={{ backgroundColor: primary && !disabled ? COL.accent : "rgb(69, 52, 39)", opacity: disabled ? 0.4 : 1 }}>
-        <div class={S4.glyphText}>{glyph}</div>
-    </div>
 
 // Eine Beobachtung an EINER Einheit: Eingabe + ihr (sortierter) Output.
 type Obs = { inp: number[], out: number[] }
@@ -547,7 +541,7 @@ const HypothesisPuzzle = ({ config, solved }: { config: HypoRound, solved: () =>
                 // Slot = Drop-Ziel (Ref für den Hit-Test); Klick leert ihn.
                 cells.push(<div key={"h" + u + "-" + c} class={S4.hypoCell}>
                     <div class={S4.inDot} style={{ backgroundImage: IMG(BALL_IMG[c]), backgroundColor: "rgba(0,0,0,0)" }}></div>
-                    <div class={S4.arrowText}>↓</div>
+                    <div class={S4.arrowImg} style={{ backgroundImage: IMG("arrow_down") }}></div>
                     <div ref={(el: any) => { slotRefs.current[uIdx * cc + cIdx] = el }}
                         onClick={() => setHypoSlot(uIdx, cIdx, -1)} class={S4.slot}
                         style={ballStyle(hypo[u][c], hypoFlash && hypo[u][c] < 0 ? COL.bad : undefined)}></div>
@@ -556,8 +550,8 @@ const HypothesisPuzzle = ({ config, solved }: { config: HypoRound, solved: () =>
             rows.push(<div key={"hr" + u + "-" + r} class={S4.hypoRow}>{cells}</div>)
         }
         const v = verdict(u)
-        rows.push(<div key={"hv" + u} class={S4.verdictText}
-            style={{ color: v === "ok" ? COL.good : v === "bad" ? COL.bad : COL.dim }}>{v === "ok" ? "✓" : v === "bad" ? "✗" : "–"}</div>)
+        rows.push(<div key={"hv" + u} class={S4.verdictImg}
+            style={{ backgroundImage: IMG(v === "ok" ? "check" : v === "bad" ? "cross" : "dash") }}></div>)
         hypoPanels.push(<div key={"hp" + u} class={S4.col}><PixelPanel center>{rows}</PixelPanel></div>)
     }
 
@@ -618,7 +612,7 @@ const HypothesisPuzzle = ({ config, solved }: { config: HypoRound, solved: () =>
     for (let u = 0; u < units; u++) {
         const uIdx = u
         tabs.push(<div key={"tab" + u} onClick={() => selectUnit(uIdx)} class={S4.tab}
-            style={{ backgroundColor: phase === "explore" && u === activeUnit ? COL.accent : "rgb(69, 52, 39)" }}>
+            style={{ backgroundColor: "rgb(69, 52, 39)", borderColor: phase === "explore" && u === activeUnit ? COL.highlight : "rgba(0,0,0,0)" }}>
             <Pips n={u + 1} color={COL.text} />
         </div>)
     }
@@ -628,7 +622,7 @@ const HypothesisPuzzle = ({ config, solved }: { config: HypoRound, solved: () =>
         chainBits.push(<div key={"b" + u} class={S4.chainBox}></div>)
     }
     tabs.push(<div key="tabchain" onClick={goSolve} class={S4.tab}
-        style={{ backgroundColor: phase === "solve" ? COL.accent : "rgb(69, 52, 39)" }}>
+        style={{ backgroundColor: "rgb(69, 52, 39)", borderColor: phase === "solve" ? COL.highlight : "rgba(0,0,0,0)" }}>
         <div class={S4.chainRow}>{chainBits}</div>
     </div>)
     const targetBalls: any[] = []
@@ -678,17 +672,16 @@ const HypothesisPuzzle = ({ config, solved }: { config: HypoRound, solved: () =>
                                     <div class={S4.pipe} style={{ backgroundImage: IMG("pipe") }}></div>
                                     <div class={S4.ballCol}>
                                         <div class={S4.ballRow}>{predBalls}</div>
-                                        <div class={S4.resultGlyph} style={{ color: result === "win" ? COL.good : result === "fail" ? COL.bad : COL.dim }}>
-                                            {result === "win" ? "✓" : result === "fail" ? "✗" : "–"}</div>
+                                        <div class={S4.resultImg} style={{ backgroundImage: IMG(result === "win" ? "check" : result === "fail" ? "cross" : "dash") }}></div>
                                     </div>
                                 </div>
                                 : <div></div>}
                         </div>
-                        {/* Start. In der Lösungsphase ist ▶ gesperrt, bis die Tafeln die
-                            Eingabe vollständig vorhersagen (pred != null). */}
+                        {/* Start. In der Lösungsphase ist der Play-Knopf gesperrt, bis die
+                            Tafeln die Eingabe vollständig vorhersagen (pred != null). */}
                         <div class={S4.ctrlRow}>
-                            <GlyphBtn glyph="▶" onClick={run} primary
-                                disabled={running || (phase === "solve" && !pred)} />
+                            <div onClick={(running || (phase === "solve" && !pred)) ? undefined : run} class={S4.btn}
+                                style={{ backgroundImage: IMG("play"), backgroundColor: "rgba(0,0,0,0)", opacity: (running || (phase === "solve" && !pred)) ? 0.4 : 1 }}></div>
                         </div>
                     </PixelPanel>
                 </div>

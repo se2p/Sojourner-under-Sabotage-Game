@@ -67,7 +67,7 @@ const COL = {
     leak: "rgb(176, 64, 60)",
     hold: "rgb(60, 150, 90)",
     valveClosed: "rgb(150, 70, 66)",
-    accent: "rgb(60, 90, 160)",
+    accent: "rgb(69, 52, 39)", // Button-Braun statt Blau (Blau passte nicht zur Tempel-Palette)
     text: "rgb(235, 238, 242)",
     backdrop: "rgb(10, 12, 16)", // deckender Vollbild-Hintergrund
     pipeRest: "rgb(84, 45, 17)", // ~#542d11 — brauner Rohr-Innenraum, immer sichtbar (etwas dunkler als #723d17); der Fluss liegt darüber
@@ -664,7 +664,7 @@ const PipeLeakPuzzle = ({ config, level, solved }: { config: RoundConfig, level:
 
     // Ergebnis-Sprite: Strich (dash) solange Test läuft / kein Test, sonst Haken (Druck hält) / Kreuz (Leck offen).
     const statusIcon = (flowing || !result) ? "puzzle_1_dash" : result === "hold" ? "puzzle_1_check" : "puzzle_1_cross"
-    const resultTip = flowing ? "Pressure test running …" : result === "hold" ? "Pressure holds" : result === "leak" ? "Pressure lost, a leak is still open" : "No pressure test yet"
+    const resultTip = flowing ? "Pressure test running..." : result === "hold" ? "Pressure holds" : result === "leak" ? "Pressure lost, a leak is still open" : "No pressure test yet"
     // Schellen-Vorrat: ein Slot je Leck; vorne die noch greifbaren Schellen, hinten leere Slots (gesetzt).
     const remaining = leakCount - markedCount
     const traySlots: any[] = []
