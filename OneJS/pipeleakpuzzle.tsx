@@ -313,8 +313,11 @@ const ValveWheel = ({ open, cls }: { open: boolean, cls: string }) => {
     const lastRef = useRef(Math.round(angleRef.current)) // zuletzt gesetzter (ganzzahliger) Winkel
     const [deg, setDeg] = useState(lastRef.current)
     useEffect(() => {
-        let raf = 0
+        // Flag statt cancelAnimationFrame: OneJS-rAF-Ids sind Listenindizes, ein Cancel mit
+        // veralteter Id kann den Callback einer ANDEREN Komponente aus der Frame-Queue löschen.
+        let cancelled = false
         const step = () => {
+            if (cancelled) return
             const target = open ? VALVE_OPEN_DEG : VALVE_CLOSED_DEG
             angleRef.current += (target - angleRef.current) * 0.18 // sanfte Annäherung -> Drehrichtung folgt aus dem Vorzeichen
             const settled = Math.abs(target - angleRef.current) < 0.5
@@ -324,10 +327,10 @@ const ValveWheel = ({ open, cls }: { open: boolean, cls: string }) => {
             const r = Math.round(shown)
             if (r !== lastRef.current) { lastRef.current = r; setDeg(r) } // nur bei Änderung re-rendern
             // weiterlaufen, solange noch nicht eingerastet ODER offen (offen wackelt dauerhaft); zu+eingerastet -> rAF stoppt
-            if (open || !settled) raf = requestAnimationFrame(step)
+            if (open || !settled) requestAnimationFrame(step)
         }
-        raf = requestAnimationFrame(step)
-        return () => cancelAnimationFrame(raf)
+        requestAnimationFrame(step)
+        return () => { cancelled = true }
     }, [open]) // angleRef bleibt über Statuswechsel erhalten -> Drehung startet am aktuellen Winkel
     return <div class={cls} style={{ backgroundImage: IMG("puzzle_1_valve"), rotate: deg }}></div>
 }

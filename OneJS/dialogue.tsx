@@ -91,9 +91,19 @@ const Dialogue = () => {
         // Self-terminating via a flag (not cancelAnimationFrame, whose OneJS id is a stale list
         // index) so leaked loops can't pile up across dialogues and keep driving the global update().
         let cancelled = false
+        // After the tween: chase the live scroll end a few more frames in case UIToolkit's
+        // layout (and thus highValue) lagged behind the tween's 400ms - otherwise the first
+        // page can be left parked above its 300px margin, i.e. an empty-looking box.
+        let settleFrames = 30
         const animate = time => {
-            if (cancelled || !tween.isPlaying()) return
-            update(time)
+            if (cancelled || !scrollView.current) return
+            if (tween.isPlaying()) {
+                update(time)
+            } else {
+                const scroller = ((scrollView.current as any).ve as ScrollView).verticalScroller
+                scroller.value = Math.max(scroller.highValue, 0)
+                if (--settleFrames <= 0) return
+            }
             requestAnimationFrame(animate)
         }
         requestAnimationFrame(animate)

@@ -320,17 +320,20 @@ const HypothesisPuzzle = ({ config, solved }: { config: HypoRound, solved: () =>
         const dur = phase === "solve" ? 700 : 450
         const turns = phase === "solve" ? 2 : 1
         const start = Date.now()
-        let raf = 0
+        // Flag statt cancelAnimationFrame: OneJS-rAF-Ids sind Listenindizes, ein Cancel mit
+        // veralteter Id kann den Callback einer ANDEREN Komponente aus der Frame-Queue löschen.
+        let cancelled = false
         const step = () => {
+            if (cancelled) return
             const t = Math.min(1, (Date.now() - start) / dur)
             const e = t * t * (3 - 2 * t)
             const r = Math.round(360 * turns * e) % 360
             if (r !== lastSpinRef.current) { lastSpinRef.current = r; setSpin(r) }
-            if (t < 1) raf = requestAnimationFrame(step)
+            if (t < 1) requestAnimationFrame(step)
             else if (lastSpinRef.current !== 0) { lastSpinRef.current = 0; setSpin(0) }
         }
-        raf = requestAnimationFrame(step)
-        return () => cancelAnimationFrame(raf)
+        requestAnimationFrame(step)
+        return () => { cancelled = true }
     }, [running])
 
     // Beobachtungen an das Log der jeweiligen Einheit anhängen.
