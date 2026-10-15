@@ -18,6 +18,15 @@ The game makes use of several packages and assets to improve the development wor
 These assets are not included in the public repository due to their licensing. 
 To extend the game further and build the Unity export yourself, you need to purchase a proper license for the two packages and place them in the `Assets`-directory.
 
+### Apply patches
+
+For the RPG Map Editor to function properly for our use case, some project-specific changes need to be applied. To do this, run the following script to automatically apply the `ThirdParty\CreativeSpore\RpgMapEditor.patch` patch file. 
+
+```cmd
+Tools\apply_thirdparty_patches.cmd
+```
+
+
 ## OneJS
 
 To edit the Preact/TypeScript part of the game, the OneJS asset is used.  

@@ -1,0 +1,34 @@
+diff --git a/Assets/CreativeSpore/RpgMapEditor/Scripts/Extra/FollowObjectBehaviour.cs b/Assets/CreativeSpore/RpgMapEditor/Scripts/Extra/FollowObjectBehaviour.cs
+--- a/Assets/CreativeSpore/RpgMapEditor/Scripts/Extra/FollowObjectBehaviour.cs
++++ b/Assets/CreativeSpore/RpgMapEditor/Scripts/Extra/FollowObjectBehaviour.cs
+@@ -28,0 +29,13 @@
++		/// <summary>
++		/// Instantly centre the camera on the target and clear the SmoothDamp
++		/// velocity, so there is no visible catch-up after a teleport.
++		/// </summary>
++		public void SnapToTarget()
++		{
++			if (!Target) return;
++			if (m_camera == null) m_camera = GetComponent<Camera>();
++			Vector3 point = m_camera.WorldToViewportPoint(Target.position);
++			Vector3 delta = Target.position - m_camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z));
++			transform.position += delta;
++			velocity = Vector3.zero;
++		}
+diff --git a/Assets/CreativeSpore/RpgMapEditor/Scripts/MapPathFinding/MapPathFindingBehaviour.cs b/Assets/CreativeSpore/RpgMapEditor/Scripts/MapPathFinding/MapPathFindingBehaviour.cs
+--- a/Assets/CreativeSpore/RpgMapEditor/Scripts/MapPathFinding/MapPathFindingBehaviour.cs
++++ b/Assets/CreativeSpore/RpgMapEditor/Scripts/MapPathFinding/MapPathFindingBehaviour.cs
+@@ -45,0 +46,5 @@
++            StopCoroutine("ComputePath");
++            m_isComputing = false;
++            // force a fresh path computation next FixedUpdate instead of waiting
++            // for TargetPos to cross into a new tile (e.g. after a teleport).
++            m_isUpdatePath = true;
+diff --git a/Assets/CreativeSpore/RpgMapEditor/Scripts/RpgFramework/Controllers/PlayerController.cs b/Assets/CreativeSpore/RpgMapEditor/Scripts/RpgFramework/Controllers/PlayerController.cs
+--- a/Assets/CreativeSpore/RpgMapEditor/Scripts/RpgFramework/Controllers/PlayerController.cs
++++ b/Assets/CreativeSpore/RpgMapEditor/Scripts/RpgFramework/Controllers/PlayerController.cs
+@@ -9,1 +9,2 @@
+ 		public GameObject BulletPrefab;
++		public bool EnableAttack = false;   // Sojourner: RPG Map Editor demo shooting, off by default
+@@ -97,0 +99,1 @@
++			if (!EnableAttack) return;
