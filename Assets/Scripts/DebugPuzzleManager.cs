@@ -65,4 +65,9 @@ public class DebugPuzzleManager : MonoBehaviour
             StompEventDelegation.OnPuzzleSolved();
         }
     }
+    
+    public static bool IsRelevant()
+    {
+        return GameProgressState.CurrentState.mode == GameProgressState.Mode.Debugging;
+    }
 }

@@ -49,6 +49,8 @@ const DebugPuzzle = () => {
     }
 
     useEffect(() => {
+        if (!debugPuzzleManager || !debugPuzzleManager.IsRelevant || !debugPuzzleManager.IsRelevant()) return
+
         debugPuzzleManager.add_OnShowPuzzle(showPuzzle)
         onEngineReload(() => debugPuzzleManager.remove_OnShowPuzzle(showPuzzle))
         return () => debugPuzzleManager.remove_OnShowPuzzle(showPuzzle)
