@@ -44,6 +44,7 @@ public class InteractableWorldObject : MonoBehaviour
     private Renderer _helpTextRenderer;
     private bool _hasHelpText;
     private Vector3? _position = null;
+    private bool _ignoreUntilKeyReleased;
     
     // METHODS PUBLIC
     public bool IsEnabled
@@ -51,6 +52,10 @@ public class InteractableWorldObject : MonoBehaviour
         get => isEnabled;
         set
         {
+            if (value && !isEnabled && Input.GetKey(activationKey))
+            {
+                _ignoreUntilKeyReleased = true;
+            }
             isEnabled = value;
             if (interactionIndicator != null)
             {
@@ -92,7 +97,22 @@ public class InteractableWorldObject : MonoBehaviour
     {
         isActivationKeyPressed = isActivationKeyPressed && Input.GetKey(activationKey)
                                  || Input.GetKeyDown(activationKey) && Time.timeSinceLevelLoad > 0.5f;
-        
+
+        // Block interactions while a dialogue is showing: the interact key is also the dialogue
+        // continue key, so advancing dialogue must not fire nearby objects. Latch until the key is
+        // released so the very press that closes the dialogue (EnableInteraction may clear the flag
+        // in the same frame, before or after this Update) can't leak into a trigger.
+        if (DialogueSystem.Instance != null && DialogueSystem.Instance.IsDialoguePlaying)
+        {
+            _ignoreUntilKeyReleased = true;
+        }
+
+        if (_ignoreUntilKeyReleased)
+        {
+            if (!Input.GetKey(activationKey)) _ignoreUntilKeyReleased = false;
+            isActivationKeyPressed = false;
+        }
+
         var pos = _position ?? transform.position;
         distanceToPlayer = Vector2.Distance(pos, _player.transform.position);
         distanceToPet = Vector2.Distance(pos, _pet.transform.position);

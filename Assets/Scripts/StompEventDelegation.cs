@@ -15,10 +15,18 @@ public class StompEventDelegation : MonoBehaviour
     
     [DllImport("__Internal")]
     private static extern void SendGameStartedEvent();
+
+    [DllImport("__Internal")]
+    private static extern void SendPuzzleSolvedEvent();
+
+    [DllImport("__Internal")]
+    private static extern void SendTempleEnteredEvent();
 #endif
     
     private const string UnsupportedPlatformMessage = "Not supported on this platform (needs to be the WebGL export)";
     private static int _latestRoomUnlocked = -1;
+    private static int _latestPuzzleSolvedRoom = -1;
+    private static int _latestTempleEnteredRoom = -1;
     
     public static void OnRoomUnlocked(int roomId)
     {
@@ -49,6 +57,40 @@ public class StompEventDelegation : MonoBehaviour
     {
 #if !UNITY_EDITOR && UNITY_WEBGL
         SendGameStartedEvent();
+#else
+        Debug.Log(UnsupportedPlatformMessage);
+#endif
+    }
+
+    public static void OnPuzzleSolved()
+    {
+        var room = GameProgressState.CurrentState?.room ?? -1;
+        if (room != -1 && _latestPuzzleSolvedRoom == room)
+        {
+            Debug.Log($"Puzzle solved for room {room} already reported, skipping event.");
+            return;
+        }
+        _latestPuzzleSolvedRoom = room;
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+        SendPuzzleSolvedEvent();
+#else
+        Debug.Log(UnsupportedPlatformMessage);
+#endif
+    }
+
+    public static void OnTempleEntered()
+    {
+        var room = GameProgressState.CurrentState?.room ?? -1;
+        if (room != -1 && _latestTempleEnteredRoom == room)
+        {
+            Debug.Log($"Temple entered for room {room} already reported, skipping event.");
+            return;
+        }
+        _latestTempleEnteredRoom = room;
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+        SendTempleEnteredEvent();
 #else
         Debug.Log(UnsupportedPlatformMessage);
 #endif

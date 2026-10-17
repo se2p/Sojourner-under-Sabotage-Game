@@ -56,6 +56,19 @@ namespace CreativeSpore.RpgMapEditor
         }
 
         /// <summary>
+        /// Call after a teleport so stale pathfinding state from the previous location
+        /// does not cause the companion to run against walls at the new position.
+        /// </summary>
+        public void ResetAfterTeleport()
+        {
+            _tempTarget = null;
+            m_pathFindingBehaviour.ClearPath();
+            m_pathFindingBehaviour.enabled = false;
+            m_moving.Arrive(transform.position);
+            m_animCtrl.IsPlaying = false;
+        }
+
+        /// <summary>
         /// Required overload as the events pass componentBehaviours instead of GameObjects as parameters.
         /// </summary>
         /// <param name="newTarget">The new target of the companion</param>

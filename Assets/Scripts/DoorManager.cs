@@ -14,9 +14,13 @@ public class DoorManager : MonoBehaviour
         if (state.status == GameProgressState.Status.DOOR) // DOOR is first status of a room
         {
             UnlockAllPreviousDoors(state.room);
-            
-            // make the door to the current room interactable:
-            _doors[state.room].ForEach(door => door.Enable());
+
+            // make the door to the current room interactable (debug-strand rooms have
+            // no doors registered — they use teleporters instead, so guard the lookup):
+            if (_doors.TryGetValue(state.room, out var doors))
+            {
+                doors.ForEach(door => door.Enable());
+            }
         } 
         else
         {

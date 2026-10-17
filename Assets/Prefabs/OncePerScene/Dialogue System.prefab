@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8990122456906433096}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -9.007215, y: 9.667322, z: -7.5708113}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1080662766609989888
 MonoBehaviour:
@@ -64,6 +64,7 @@ MonoBehaviour:
       room: 1
       stage: 1
       status: 1
+      mode: 0
     text: "Hi.\n\nYou just woke up from your cryogenic sleep.\n\nIt's completely
       normal if you feel a bit dizzy at first.\n\nThe fact that you woke up is everything
       else than normal though. \n\nI think something is attacking our ship. This
@@ -74,6 +75,7 @@ MonoBehaviour:
       room: 1
       stage: 1
       status: 3
+      mode: 0
     text: 'Great, your tests are up and running!
 
 
@@ -83,6 +85,7 @@ MonoBehaviour:
       room: 1
       stage: 1
       status: 4
+      mode: 0
     text: 'Oh no :/
 
 
@@ -110,6 +113,7 @@ MonoBehaviour:
       room: 1
       stage: 1
       status: 5
+      mode: 0
     text: "The cryo chamber system was attacked again! \n\nBut luckily now your tests
       detected it soon enough and powered it off.\n\nNow try to fix the component
       as soon as possible, so we can turn it back on!\n\nWhile the system is down,
@@ -118,6 +122,7 @@ MonoBehaviour:
       room: 2
       stage: 1
       status: 0
+      mode: 0
     text: 'Well done!
 
 
@@ -137,6 +142,7 @@ MonoBehaviour:
       room: 2
       stage: 1
       status: 1
+      mode: 0
     text: 'Great!
 
 
@@ -154,6 +160,7 @@ MonoBehaviour:
       room: 3
       stage: 1
       status: 1
+      mode: 0
     text: 'If you follow this corridor, you''ll get to the farm of the ship.
 
 
@@ -163,6 +170,7 @@ MonoBehaviour:
       room: 4
       stage: 1
       status: 1
+      mode: 0
     text: 'This is the canteen of the spaceship.
 
 
@@ -175,6 +183,7 @@ MonoBehaviour:
       room: 5
       stage: 1
       status: 1
+      mode: 0
     text: "This is the nuclear reactor.\n\nAll the electric energy on board the Sojourner
       is generated here.\n\nThis room means the most to me. \n\nProbably because
       I need the electricity."
@@ -182,6 +191,7 @@ MonoBehaviour:
       room: 6
       stage: 1
       status: 1
+      mode: 0
     text: 'Great!
 
 
@@ -198,6 +208,7 @@ MonoBehaviour:
       room: 7
       stage: 1
       status: 1
+      mode: 0
     text: 'Oh, looks like the reception is empty today.
 
 
@@ -214,6 +225,7 @@ MonoBehaviour:
       room: 2
       stage: 1
       status: 4
+      mode: 0
     text: 'Oh no :/
 
 
@@ -237,6 +249,7 @@ MonoBehaviour:
       room: 3
       stage: 1
       status: 4
+      mode: 0
     text: 'Oh no :/
 
 
@@ -261,6 +274,7 @@ MonoBehaviour:
       room: 4
       stage: 1
       status: 4
+      mode: 0
     text: 'Oh no :/
 
 
@@ -281,6 +295,7 @@ MonoBehaviour:
       room: 5
       stage: 1
       status: 4
+      mode: 0
     text: 'Uhmm..
 
 
@@ -315,6 +330,7 @@ MonoBehaviour:
       room: 6
       stage: 1
       status: 4
+      mode: 0
     text: 'What''s that?
 
 
@@ -342,6 +358,7 @@ MonoBehaviour:
       room: 7
       stage: 1
       status: 4
+      mode: 0
     text: 'One of our RNA Analyzers just crashed.
 
 
@@ -362,6 +379,7 @@ MonoBehaviour:
       room: 2
       stage: 1
       status: 5
+      mode: 0
     text: "The engine was attacked! \n\nBut luckily your tests detected it soon enough
       and powered it off.\n\nNow try to fix the engine software as soon as possible,
       so we can turn it back on and continue our journey."
@@ -369,6 +387,7 @@ MonoBehaviour:
       room: 3
       stage: 1
       status: 5
+      mode: 0
     text: 'The automatic harvesting system was attacked.
 
 
@@ -382,6 +401,7 @@ MonoBehaviour:
       room: 4
       stage: 1
       status: 5
+      mode: 0
     text: 'Oh, looks like the smart fridge was attacked.
 
 
@@ -395,6 +415,7 @@ MonoBehaviour:
       room: 5
       stage: 1
       status: 5
+      mode: 0
     text: 'It seems like something is wrong with the reactor.
 
 
@@ -413,6 +434,7 @@ MonoBehaviour:
       room: 7
       stage: 1
       status: 5
+      mode: 0
     text: "The RNA analyzer was attacked! \n\nBut luckily your tests detected it
       soon enough and powered it off.\n\nNow try to fix its software as soon as possible,
       so we can turn it back on."
@@ -420,6 +442,7 @@ MonoBehaviour:
       room: 3
       stage: 1
       status: 0
+      mode: 0
     text: 'Well done!
 
 
@@ -439,6 +462,7 @@ MonoBehaviour:
       room: 4
       stage: 1
       status: 0
+      mode: 0
     text: 'Good job!
 
 
@@ -459,6 +483,7 @@ MonoBehaviour:
       room: 5
       stage: 1
       status: 0
+      mode: 0
     text: 'Awesome!
 
 
@@ -472,6 +497,7 @@ MonoBehaviour:
       room: 6
       stage: 1
       status: 0
+      mode: 0
     text: 'I''m very happy we managed this without blowing up the ship. Congrats.
 
 
@@ -481,6 +507,7 @@ MonoBehaviour:
       room: 7
       stage: 1
       status: 0
+      mode: 0
     text: 'Nice!
 
 
@@ -493,6 +520,7 @@ MonoBehaviour:
       room: 2
       stage: 1
       status: 3
+      mode: 0
     text: 'Nice, your tests are up and running!
 
 
@@ -506,6 +534,7 @@ MonoBehaviour:
       room: 3
       stage: 1
       status: 3
+      mode: 0
     text: 'Good job, your tests are up and running!
 
 
@@ -515,12 +544,14 @@ MonoBehaviour:
       room: 4
       stage: 1
       status: 3
+      mode: 0
     text: "Great, your tests are up and running!\n\nNow you can finally eat something.
       \n\nYou must be hungry after all those years in the cryogenic sleep."
   - Condition:
       room: 5
       stage: 1
       status: 3
+      mode: 0
     text: 'Good job, your tests are up and running.
 
 
@@ -530,6 +561,7 @@ MonoBehaviour:
       room: 6
       stage: 1
       status: 3
+      mode: 0
     text: 'Great, your tests are up and running!
 
 
@@ -539,6 +571,7 @@ MonoBehaviour:
       room: 7
       stage: 1
       status: 3
+      mode: 0
     text: 'Great, your tests are up and running!
 
 
@@ -552,6 +585,7 @@ MonoBehaviour:
       room: 6
       stage: 1
       status: 5
+      mode: 0
     text: 'Look at the defense radar!
 
 

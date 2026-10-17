@@ -13,5 +13,27 @@ mergeInto(LibraryManager.library, {
     },
     SendGameStartedEvent: function () {
         window.es.sendEvent(new GameStartedEvent());
+    },
+    OpenDebugger: function (componentName) {
+        window.openDebugger(UTF8ToString(componentName));
+    },
+    SendPuzzleSolvedEvent: function () {
+        window.es.sendEvent(new PuzzleSolvedEvent());
+    },
+    SetPuzzleOpen: function (open) {
+        window.setPuzzleOpen(!!open);
+    },
+    NotifyEpilogueFinished: function () {
+        window.onEpilogueFinished();
+    },
+    SendTempleEnteredEvent: function () {
+        window.es.sendEvent(new TempleEnteredEvent());
+    },
+    GetGameMode: function () {
+        var str = window.gameMode || "Testing";
+        var bufferSize = lengthBytesUTF8(str) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(str, buffer, bufferSize);
+        return buffer;
     }
 });

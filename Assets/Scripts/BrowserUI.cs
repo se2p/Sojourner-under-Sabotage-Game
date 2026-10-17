@@ -10,7 +10,16 @@ public class BrowserUI : MonoBehaviour
     private static extern void OpenEditors(string componentName);
 
     [DllImport("__Internal")]
+    private static extern void OpenDebugger(string componentName);
+
+    [DllImport("__Internal")]
     private static extern void ToggleAlarm(bool isOn);
+
+    [DllImport("__Internal")]
+    private static extern void SetPuzzleOpen(bool open);
+
+    [DllImport("__Internal")]
+    private static extern void NotifyEpilogueFinished();
 #endif
     
     public UnityEvent onEditorCloseEvent;
@@ -32,6 +41,16 @@ public class BrowserUI : MonoBehaviour
 #endif
     }
 
+    public static void OpenDebuggerForComponent(string componentName)
+    {
+#if !UNITY_EDITOR && UNITY_WEBGL
+        OpenDebugger(componentName);
+        Time.timeScale = 0;
+#else
+        Debug.Log("Not supported on this platform (needs to be the WebGL export)");
+#endif
+    }
+
     public void OnEditorClose()
     {
         Debug.Log("Editor closed");
@@ -47,4 +66,25 @@ public class BrowserUI : MonoBehaviour
         Debug.Log("Not supported on this platform (needs to be the WebGL export)");
 #endif
     }
+
+    public static void NotifyPuzzleOpen(bool open)
+    {
+#if !UNITY_EDITOR && UNITY_WEBGL
+        SetPuzzleOpen(open);
+#else
+        Debug.Log("Not supported on this platform (needs to be the WebGL export)");
+#endif
+    }
+
+    // The web app holds back the "game finished" popup until the in-game epilogue has been
+    // talked through; this tells it the epilogue is over and it can end the session.
+    public static void NotifyEpilogueOver()
+    {
+#if !UNITY_EDITOR && UNITY_WEBGL
+        NotifyEpilogueFinished();
+#else
+        Debug.Log("Not supported on this platform (needs to be the WebGL export)");
+#endif
+    }
+
 }
